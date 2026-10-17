@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copy ?q= to Clipboard</title>
+</head>
+<body>
+
+    <p id="status">Loading...</p>
+
+    <script>
+        // 1. Get the 'q' parameter from the URL (e.g., ?q=Hello+World)
+        const params = new URLSearchParams(window.location.search);
+        const qValue = params.get('q');
+        const statusEl = document.getElementById('status');
+
+        if (qValue) {
+            // 2. Try copying using the Clipboard API
+            navigator.clipboard.writeText(qValue)
+                .then(() => {
+                    statusEl.textContent = `Copied to clipboard: "${qValue}"`;
+                })
+                .catch(err => {
+                    statusEl.textContent = 'Failed to copy automatically. Click anywhere on the page to copy.';
+                    // Fallback: copy on user click if browser blocks auto-copy
+                    document.body.addEventListener('click', () => {
+                        navigator.clipboard.writeText(qValue);
+                        statusEl.textContent = `Copied to clipboard: "${qValue}"`;
+                    }, { once: true });
+                });
+        } else {
+            statusEl.textContent = 'No ?q= parameter found in the URL.';
+        }
+    </script>
+
+</body>
+</html>
